@@ -75,9 +75,9 @@
             "items": {
                 "type": "object",
                 "properties": {
-                                         "spark_job_name": {"type": "string", "enum": ["dpf_email_sender"]},
-                     "job_name": {"type": "string", "pattern": "^cm_[a-z]{3,5}_[0-9]+_(preprocess|report|anomaly|master)_[a-zA-Z0-9_]+$"},
-                     "dag_task_order": {"type": "string"},
+                    "spark_job_name": {"type": "string", "enum": ["dpf_email_sender"]},
+                    "job_name": {"type": "string"},
+                    "dag_task_order": {"type": "string"},
                     "job_description": {"type": "string"},
                     "mail_type": {"type": "string"},
                     "mail_type_description": {"type": "string"},
@@ -114,9 +114,9 @@
             "items": {
                 "type": "object",
                 "properties": {
-                                         "spark_job_name": {"type": "string", "enum": ["dpf_user_specific_email_sender"]},
-                     "job_name": {"type": "string", "pattern": "^cm_[a-z]{3,5}_[0-9]+_(preprocess|report|anomaly|master)_[a-zA-Z0-9_]+$"},
-                     "dag_task_order": {"type": "string"},
+                    "spark_job_name": {"type": "string", "enum": ["dpf_user_specific_email_sender"]},
+                    "job_name": {"type": "string"},
+                    "dag_task_order": {"type": "string"},
                     "job_description": {"type": "string"},
                     "mail_type": {"type": "string"},
                     "mail_type_description": {"type": "string"},
