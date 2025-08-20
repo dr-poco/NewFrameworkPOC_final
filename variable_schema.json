@@ -1,0 +1,172 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SQLJobConfiguration",
+  "type": "object",
+  "properties": {
+    "control_variables": {
+      "type": "object",
+      "properties": {
+        "control_number": { "type": "string"},
+        "dag_name": { "type": "string", "pattern": "^dag_dpf__cm_[a-z]{3,5}_[0-9]+$" },
+        "run_date": { "type": "string", "format": "date" },
+        "concurrency": { "type": "integer" },
+        "tag": { "type": "string" },
+        "schedule": { "type": "string", "pattern": "^((\\*|([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])|\\*\\/([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])) ){4}(\\*|([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])|\\*\\/([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9]))$" },
+        "precheck_command": { "type": "string" }
+      },
+      "required": ["control_number", "dag_name", "run_date", "concurrency", "tag", "schedule", "precheck_command"]
+    },
+    "sql_jobs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "spark_job_name": { "type": "string", "enum": ["dpf_sql_executor"]},
+          "job_name": { "type": "string", "pattern": "^cm_[a-z]{3,5}_[0-9]+_(preprocess|report|anomaly|master)_[a-zA-Z0-9_]+$" },
+          "dag_task_order": { "type": "string" },
+          "queries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "query_name": { "type": "string" },
+                "query_description": { "type": "string" },
+                "order_of_execution": { "type": "integer" },
+                "src_query_file_path": { "type": "string" },
+                "tgt_owner": { "type": "string" },
+                "tgt_table": { "type": "string" },
+                "tgt_strategy": { "type": "string", "enum": ["Insert_Overwrite", "Partition_Overwrite", "Create_Temp_View"]},
+                "query_config": {
+                    "type": "object",
+                    "properties": {
+                        "no_of_past_days": {
+                        "anyOf": [
+                            { "type": "integer" },
+                            {
+                            "type": "string",
+                            "pattern": "^NA$"
+                            }
+                        ]
+                        }
+                    },
+                    "required": ["no_of_past_days"],
+                    "additionalProperties": true
+                    }
+              },
+              "required": ["query_name", "query_description", "order_of_execution", "src_query_file_path", "tgt_owner", "tgt_table", "tgt_strategy", "query_config"]
+            }
+          },
+          "spark_submit_config": {
+            "type": "object",
+            "properties": {
+              "executorCores": { "type": "integer" },
+              "executorMemory": { "type": "string" },
+              "driverCores": { "type": "integer" },
+              "driverMemory": { "type": "string" }
+            },
+            "additionalProperties": true
+          }
+        },
+        "required": ["spark_job_name", "job_name", "queries"]
+      }
+    },
+    "normal_email_reports": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                                         "spark_job_name": {"type": "string", "enum": ["dpf_email_sender"]},
+                     "job_name": {"type": "string", "pattern": "^cm_[a-z]{3,5}_[0-9]+_(preprocess|report|anomaly|master)_[a-zA-Z0-9_]+$"},
+                     "dag_task_order": {"type": "string"},
+                    "job_description": {"type": "string"},
+                    "mail_type": {"type": "string"},
+                    "mail_type_description": {"type": "string"},
+                    "mail_body_src_table": {"type": "string"},
+                    "mail_attachment_sheets": {
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
+                    },                    
+                    "mail_template_path": {"type": "string"},
+                    "subject": {"type": "string"},
+                    "to_email": {"type": "string"},
+                    "cc_email": {"type": "string" },
+                    "department": {"type": "string" },
+                    "sub_unit": {"type": "string" },
+                    "criticality": {"type": "string" },
+                    "mail_description": {"type": "string" }
+                },
+                "required": [
+                    "spark_job_name",
+                    "job_name",
+                    "mail_type",
+                    "mail_template_path",                    
+                    "subject",
+                    "to_email",
+                    "cc_email",
+                    "mail_description"
+                ]
+            }
+        },
+        "user_specific_email_reports": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                                         "spark_job_name": {"type": "string", "enum": ["dpf_user_specific_email_sender"]},
+                     "job_name": {"type": "string", "pattern": "^cm_[a-z]{3,5}_[0-9]+_(preprocess|report|anomaly|master)_[a-zA-Z0-9_]+$"},
+                     "dag_task_order": {"type": "string"},
+                    "job_description": {"type": "string"},
+                    "mail_type": {"type": "string"},
+                    "mail_type_description": {"type": "string"},
+                    "mail_body_src_table": {"type": "string"},
+                    "user_grouping_columns": {
+                        "type": "object",
+                        "properties": {
+                            "group_by_column": {
+                                "type": "string"
+                            },
+                            "to_email_column": {
+                                "type": "string"
+                            },
+                            "cc_email_column": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "group_by_column",
+                            "to_email_column",
+                            "cc_email_column"
+                        ]
+                    },
+                    "mail_template_path": {"type": "string"},
+                    "subject": {"type": "string"},
+                    "common_to_email": {"type": "string"},
+                    "common_cc_email": {"type": "string"},
+                    "department": {"type": "string"},
+                    "sub_unit": {"type": "string"},
+                    "criticality": {"type": "string"},
+                    "mail_description": {"type": "string"}
+                },
+                "required": [
+                    "spark_job_name",
+                    "mail_type",
+                    "mail_body_src_table",
+                    "user_grouping_columns",
+                    "mail_template_path",
+                    "subject",
+                    "common_to_email",
+                    "common_cc_email",
+                    "mail_description"
+                ]
+            }
+        }
+    },
+    "required": [
+        "control_variables",
+        "sql_jobs",
+        "normal_email_reports",
+        "user_specific_email_reports"
+    ]
+}
