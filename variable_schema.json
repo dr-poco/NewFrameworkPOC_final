@@ -10,11 +10,12 @@
         "dag_name": { "type": "string", "pattern": "^dag_dpf__cm_[a-z]{3,5}_[0-9]+$" },
         "run_date": { "type": "string", "format": "date" },
         "concurrency": { "type": "integer" },
-        "tags": { "type": "string" },
+        "tags": { "type": "string", "description": "Comma-separated list of tags for the DAG" },
         "schedule": { "type": "string", "pattern": "^((\\*|([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])|\\*\\/([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])) ){4}(\\*|([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])|\\*\\/([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9]))$" },
-        "precheck_command": { "type": "string" }
+        //"precheck_command": { "type": "string", "pattern": "^.*\\/dag_dpf__cm_[a-z]{3,5}_[0-9]+\\/dag_dpf__cm_[a-z]{3,5}_[0-9]+_env\\.sh$", "description": "Precheck command ending with dag_name/dag_name_env.sh format where dag_name follows the pattern dag_dpf__cm_{dpt}_{c_no}" }
+        "precheck_command": { "type": "string", "pattern": "^.*\\/[^\\/]+\\/[^\\/]+_env\\.sh$", "description": "Precheck command ending with dag_name/dag_name_env.sh format where dag_name should match the dag_name value in this control_variables object" }
       },
-      "required": ["control_number", "dag_name", "run_date", "concurrency", "tag", "schedule", "precheck_command"]
+      "required": ["control_number", "dag_name", "run_date", "concurrency", "tags", "schedule", "precheck_command"]
     },
     "sql_jobs": {
       "type": "array",
@@ -31,7 +32,6 @@
               "properties": {
                 "query_name": { "type": "string", "pattern": "^cm_[a-z]{3,5}_[0-9]+_(preprocess|master|anomaly|report)_[a-zA-Z0-9_]+$" },
                 "query_description": { "type": "string" },
-                "order_of_execution": { "type": "integer" },
                 "src_query_file_path": { "type": "string" },
                 "tgt_owner": { "type": "string" },
                 "tgt_table": { "type": "string", "pattern": "^cm_[a-z]{3,5}_[0-9]+_(preprocess|master|anomaly|report)_[a-zA-Z0-9_]+$" },
@@ -53,7 +53,7 @@
                     "additionalProperties": true
                     }
               },
-              "required": ["query_name", "query_description", "order_of_execution", "src_query_file_path", "tgt_owner", "tgt_table", "tgt_strategy", "query_config"]
+              "required": ["query_name", "query_description", "src_query_file_path", "tgt_owner", "tgt_table", "tgt_strategy", "query_config"]
             }
           },
           "spark_submit_config": {
